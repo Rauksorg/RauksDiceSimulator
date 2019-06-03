@@ -6,9 +6,16 @@ import (
 	"math/rand"
 )
 
+/*
+refactor
+create setup function
+resultPercent -> function
+throw dice -> function
+*/
+
 type diceProfile [6]int
 type results [3]int
-type dicesRoll struct {
+type actionDice struct {
 	diceProfile   // store if the face is failure (0), success (1) or epic fail (2)
 	results       // store the number of success, failure, and epic
 	total         int
@@ -17,15 +24,11 @@ type dicesRoll struct {
 }
 
 func main() {
-	var myResults dicesRoll
-	myResults.total = 1000000
-	myResults.reroll = 1
-	myResults.diceProfile[0] = 1
-	myResults.diceProfile[1] = 0
-	myResults.diceProfile[2] = 0
-	myResults.diceProfile[3] = 0
-	myResults.diceProfile[4] = 0
-	myResults.diceProfile[5] = 2
+	myResults := actionDice{
+		total:       1000000,
+		reroll:      1,
+		diceProfile: diceProfile{1, 0, 0, 0, 0, 2},
+	}
 
 	//throw total number of time
 	for index := 0; index < myResults.total; index++ {
