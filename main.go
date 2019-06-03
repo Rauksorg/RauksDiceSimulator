@@ -6,40 +6,47 @@ import (
 	"math/rand"
 )
 
+type diceProfile [6]int
 type results [3]int
-type failOrSuccess [6]int
 type dicesRoll struct {
-	failOrSuccess // store if the face is failure (0), success (1) or epic fail (2)
+	diceProfile   // store if the face is failure (0), success (1) or epic fail (2)
 	results       // store the number of success, failure, and epic
 	total         int
 	reroll        int
-	resultPerCent [3]float64
+	resultPerCent [3]int
 }
 
 func main() {
 	var myResults dicesRoll
-	myResults.total = 1000
+	myResults.total = 100000
 	myResults.reroll = 1
-	myResults.failOrSuccess[0] = 1
-	myResults.failOrSuccess[1] = 0
-	myResults.failOrSuccess[5] = 2
+	myResults.diceProfile[0] = 1
+	myResults.diceProfile[1] = 0
+	myResults.diceProfile[2] = 0
+	myResults.diceProfile[3] = 0
+	myResults.diceProfile[4] = 0
+	myResults.diceProfile[5] = 2
 
 	for index := 0; index < myResults.total; index++ {
 		randNum := rand.Intn(6)
-		checkSuccess := myResults.failOrSuccess[randNum]
+		checkSuccess := myResults.diceProfile[randNum]
 
-		resultWithRR := reroll(checkSuccess, myResults.reroll, myResults.failOrSuccess)
+		resultWithRR := reroll(checkSuccess, myResults.reroll, myResults.diceProfile)
 
 		myResults.results[resultWithRR]++
 
 	}
 
-	myResults.resultPerCent[0] = math.Round(100 * float64(myResults.results[0]) / float64(myResults.total))
-	myResults.resultPerCent[1] = math.Round(100 * float64(myResults.results[1]) / float64(myResults.total))
-	myResults.resultPerCent[2] = math.Round(100 * float64(myResults.results[2]) / float64(myResults.total))
+	myResults.resultPerCent[0] = percent(myResults.results[0], myResults.total)
+	myResults.resultPerCent[1] = percent(myResults.results[1], myResults.total)
+	myResults.resultPerCent[2] = percent(myResults.results[2], myResults.total)
 
 	fmt.Println(myResults.resultPerCent)
 
+}
+func percent(occurrence int, total int) int {
+	floatResult := math.Round(100 * float64(occurrence) / float64(total))
+	return int(floatResult)
 }
 func reroll(result int, nReroll int, table [6]int) int {
 	var isEpic int
