@@ -18,12 +18,12 @@ type dicesRoll struct {
 
 func main() {
 	var myResults dicesRoll
-	myResults.total = 5
-	myResults.reroll = 0
+	myResults.total = 1000000
+	myResults.reroll = 1
 	myResults.diceProfile[0] = 1
-	myResults.diceProfile[1] = 1
-	myResults.diceProfile[2] = 1
-	myResults.diceProfile[3] = 1
+	myResults.diceProfile[1] = 0
+	myResults.diceProfile[2] = 0
+	myResults.diceProfile[3] = 0
 	myResults.diceProfile[4] = 0
 	myResults.diceProfile[5] = 2
 
@@ -57,7 +57,6 @@ func reroll(result int, nReroll int, table [6]int) int {
 
 	// Rerolling for loop
 	for index := 0; index < nReroll; index++ {
-		fmt.Println("hello")
 		randNum := rand.Intn(6)
 		if table[randNum] == 1 {
 			return 1
