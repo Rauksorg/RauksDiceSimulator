@@ -36,8 +36,8 @@ func main() {
 		diceProfile: diceProfile{1, 0, 0, 0, 0, 2},
 	}
 	myResults2 := destinyDice{
-		total:        1000000,
-		numberOfDice: 3,
+		total:        10000000,
+		numberOfDice: 4,
 		diceProfile:  diceProfile{0, 0, 1, 1, 2, 3},
 	}
 
@@ -64,7 +64,6 @@ func toPercent(occurrence int, total int) int {
 	return int(floatResult)
 }
 func reroll(result int, nReroll int, table [6]int) int {
-
 	var isEpic int
 	if result == 1 {
 		return 1
@@ -72,7 +71,6 @@ func reroll(result int, nReroll int, table [6]int) int {
 	if result == 2 {
 		isEpic = 1
 	}
-
 	// Rerolling for loop
 	for index := 0; index < nReroll; index++ {
 		randNum := rand.Intn(6)
@@ -85,10 +83,10 @@ func reroll(result int, nReroll int, table [6]int) int {
 		if table[randNum] == 2 {
 			isEpic = 1
 		}
-
 	}
 	return 0
 }
+
 func destiny(numberOfDice int, diceProfile [6]int) int {
 	result := []int{}
 	epic := 0
