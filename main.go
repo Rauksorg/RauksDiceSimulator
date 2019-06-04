@@ -35,8 +35,13 @@ func main() {
 		reroll:      1,
 		diceProfile: diceProfile{1, 0, 0, 0, 0, 2},
 	}
+	myResults2 := destinyDice{
+		total:        1000000,
+		numberOfDice: 3,
+		diceProfile:  diceProfile{0, 0, 1, 1, 2, 3},
+	}
 
-	//throw total number of time
+	//throw action dice total number of time
 	for index := 0; index < myResults.total; index++ {
 		randNum := rand.Intn(6)
 		checkSuccess := myResults.diceProfile[randNum]
@@ -45,12 +50,7 @@ func main() {
 	}
 	fmt.Println("Fail :", toPercent(myResults.results[0], myResults.total), "| Success :", toPercent(myResults.results[1], myResults.total), "| Epic fail :", toPercent(myResults.results[2], myResults.total))
 
-	myResults2 := destinyDice{
-		total:        1000000,
-		numberOfDice: 2,
-		diceProfile:  diceProfile{0, 0, 1, 1, 2, 3},
-	}
-
+	//throw destiny dice total number of time
 	for index := 0; index < myResults2.total; index++ {
 		destinyResult := destiny(myResults2.numberOfDice, myResults2.diceProfile)
 		myResults2.results[destinyResult]++
