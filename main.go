@@ -4,26 +4,32 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"sort"
 )
 
 /*
 refactor
 create setup function
-resultPercent -> function
+resulttoPercent -> function
 throw dice -> function
 */
-
 type diceProfile [6]int
-type results [3]int
 type actionDice struct {
-	diceProfile   // store if the face is failure (0), success (1) or epic fail (2)
-	results       // store the number of success, failure, and epic
-	total         int
-	reroll        int
-	resultPerCent [3]int
+	diceProfile diceProfile // store if the face is failure (0), success (1) or epic fail (2)
+	results     [3]int      // store the number of success, failure, and epic
+	total       int
+	reroll      int
+}
+
+type destinyDice struct {
+	diceProfile  diceProfile // store if the face is failure (0), success (1) or epic fail (2)
+	results      [5]int      // store the number of success, failure, and epic
+	total        int
+	numberOfDice int
 }
 
 func main() {
+
 	myResults := actionDice{
 		total:       1000000,
 		reroll:      1,
@@ -37,19 +43,28 @@ func main() {
 		resultWithRR := reroll(checkSuccess, myResults.reroll, myResults.diceProfile)
 		myResults.results[resultWithRR]++
 	}
+	fmt.Println("Fail :", toPercent(myResults.results[0], myResults.total), "| Success :", toPercent(myResults.results[1], myResults.total), "| Epic fail :", toPercent(myResults.results[2], myResults.total))
 
-	myResults.resultPerCent[0] = percent(myResults.results[0], myResults.total)
-	myResults.resultPerCent[1] = percent(myResults.results[1], myResults.total)
-	myResults.resultPerCent[2] = percent(myResults.results[2], myResults.total)
+	myResults2 := destinyDice{
+		total:        1000000,
+		numberOfDice: 2,
+		diceProfile:  diceProfile{0, 0, 1, 1, 2, 3},
+	}
 
-	fmt.Println(myResults.resultPerCent)
+	for index := 0; index < myResults2.total; index++ {
+		destinyResult := destiny(myResults2.numberOfDice, myResults2.diceProfile)
+		myResults2.results[destinyResult]++
+	}
+	fmt.Println("0 :", toPercent(myResults2.results[0], myResults2.total), "| 1 :", toPercent(myResults2.results[1], myResults2.total), "| 2 :", toPercent(myResults2.results[2], myResults2.total), "| 3 :", toPercent(myResults2.results[3], myResults2.total), "| Epic :", toPercent(myResults2.results[4], myResults2.total))
 
 }
-func percent(occurrence int, total int) int {
+
+func toPercent(occurrence int, total int) int {
 	floatResult := math.Round(100 * float64(occurrence) / float64(total))
 	return int(floatResult)
 }
 func reroll(result int, nReroll int, table [6]int) int {
+
 	var isEpic int
 	if result == 1 {
 		return 1
@@ -73,4 +88,22 @@ func reroll(result int, nReroll int, table [6]int) int {
 
 	}
 	return 0
+}
+func destiny(numberOfDice int, diceProfile [6]int) int {
+	result := []int{}
+	epic := 0
+	for index := 0; index < numberOfDice; index++ {
+		randNum := rand.Intn(6)
+		checkSuccess := diceProfile[randNum]
+		if checkSuccess == 3 {
+			epic++
+		}
+		result = append(result, checkSuccess)
+	}
+	if epic >= 2 {
+		return 4
+	}
+	sort.Ints(result)
+	best := result[len(result)-1]
+	return best
 }
