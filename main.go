@@ -23,9 +23,10 @@ type actionDice struct {
 
 type destinyDice struct {
 	diceProfile  diceProfile // store if the face is failure (0), success (1) or epic fail (2)
-	results      [5]int      // store the number of success, failure, and epic
+	results      [4]int      // store the number of success, failure, and epic
 	total        int
 	numberOfDice int
+	choose string
 }
 
 func main() {
@@ -36,9 +37,10 @@ func main() {
 		diceProfile: diceProfile{1, 0, 0, 0, 0, 2},
 	}
 	myResults2 := destinyDice{
-		total:        10000000,
-		numberOfDice: 4,
-		diceProfile:  diceProfile{0, 0, 1, 1, 2, 3},
+		total:        1000000,
+		numberOfDice: 2,
+		diceProfile:  diceProfile{0, 0, 1, 1, 2, 2},
+		choose: "worst",
 	}
 
 	//throw action dice total number of time
@@ -52,10 +54,11 @@ func main() {
 
 	//throw destiny dice total number of time
 	for index := 0; index < myResults2.total; index++ {
-		destinyResult := destiny(myResults2.numberOfDice, myResults2.diceProfile)
-		myResults2.results[destinyResult]++
+		destinyResult := destiny(myResults2.numberOfDice, myResults2.diceProfile, myResults2.choose)
+		checkSuccess := myResults2.diceProfile[destinyResult]
+		myResults2.results[checkSuccess]++
 	}
-	fmt.Println("0 :", toPercent(myResults2.results[0], myResults2.total), "| 1 :", toPercent(myResults2.results[1], myResults2.total), "| 2 :", toPercent(myResults2.results[2], myResults2.total), "| 3 :", toPercent(myResults2.results[3], myResults2.total), "| Epic :", toPercent(myResults2.results[4], myResults2.total))
+	fmt.Println("No :", toPercent(myResults2.results[0], myResults2.total), "| Neutral :", toPercent(myResults2.results[1], myResults2.total), "| Yes :", toPercent(myResults2.results[2], myResults2.total), "| Epic :", toPercent(myResults2.results[3], myResults2.total))
 
 }
 
@@ -87,21 +90,17 @@ func reroll(result int, nReroll int, table [6]int) int {
 	return 0
 }
 
-func destiny(numberOfDice int, diceProfile [6]int) int {
-	result := []int{}
-	epic := 0
+func destiny(numberOfDice int, diceProfile [6]int, choose string) int {
+	arrayResult :=make([]int, numberOfDice)
 	for index := 0; index < numberOfDice; index++ {
 		randNum := rand.Intn(6)
-		checkSuccess := diceProfile[randNum]
-		if checkSuccess == 3 {
-			epic++
-		}
-		result = append(result, checkSuccess)
+		arrayResult[index]=randNum
 	}
-	if epic >= 2 {
-		return 4
+	sort.Ints(arrayResult) 
+	best:= arrayResult[len(arrayResult)-1]
+	worst:= arrayResult[0]
+	if(choose == "worst"){
+		 return worst
 	}
-	sort.Ints(result)
-	best := result[len(result)-1]
 	return best
 }
